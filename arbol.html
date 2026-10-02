@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Árbol Sintáctico 3D Interactivo - (id + id) * id</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Fondo tecnológico animado -->
+  <div class="background-canvas">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Cabecera Principal y Controles -->
+  <header class="app-header">
+    <div class="header-title-container">
+      <div class="icon-badge">
+        <svg fill="none" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4m14-5l3 5-3 5M6 7l-3 5 3 5" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title">Árbol Sintáctico 3D Interactivo</h1>
+        <p class="header-subtitle">Compiladores • Parse Tree de la expresión <code>(id + id) * id</code></p>
+      </div>
+    </div>
+
+    <!-- Botones de Control de la Escena -->
+    <div class="header-controls">
+      <button id="btn-auto-rotate" class="control-btn" title="Activar rotación continua de la cámara">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Órbita 3D</span>
+      </button>
+
+      <button id="btn-replay" class="control-btn" title="Repetir la animación de despliegue en cascada">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Animar</span>
+      </button>
+
+      <button id="btn-reset" class="control-btn" title="Restablecer posición de cámara y zoom">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+        </svg>
+        <span>Restablecer</span>
+      </button>
+
+      <button id="btn-grammar" class="control-btn active" title="Mostrar/Ocultar reglas gramaticales">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Gramática</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Barra de Expresión y Hojas Terminales -->
+  <div class="expression-bar">
+    <div class="expression-box">
+      <span class="expr-label">Secuencia Generada:</span>
+      <div class="expr-tokens">
+        <span id="token-0" class="token-span" style="color: #f472b6;">(</span>
+        <span id="token-1" class="token-span" style="color: #34d399;">id</span>
+        <span id="token-2" class="token-span" style="color: #fbbf24;">+</span>
+        <span id="token-3" class="token-span" style="color: #34d399;">id</span>
+        <span id="token-4" class="token-span" style="color: #f472b6;">)</span>
+        <span id="token-5" class="token-span" style="color: #fbbf24;">*</span>
+        <span id="token-6" class="token-span" style="color: #34d399;">id</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Lateral Flotante de Gramática -->
+  <aside id="grammar-drawer" class="grammar-drawer">
+    <div class="grammar-header">
+      <h3>Gramática Libre de Contexto</h3>
+    </div>
+    <ul class="grammar-rules">
+      <li><strong>E</strong> → E + T | T</li>
+      <li><strong>T</strong> → T * F | F</li>
+      <li><strong>F</strong> → ( E ) | id</li>
+    </ul>
+    <p style="margin-top: 12px; font-size: 0.72rem; color: #94a3b8; line-height: 1.4;">
+      El árbol muestra la derivación canónica por la izquierda de la cadena <em>(id + id) * id</em> resolviendo la precedencia de operadores.
+    </p>
+  </aside>
+
+  <!-- Giroscopio / Indicador de Perspectiva 3D -->
+  <div class="gyro-indicator">
+    <span>Cámara 3D:</span>
+    <div class="gyro-axes">
+      <span>RotX: <strong id="rot-x-val">12.0°</strong></span>
+      <span>RotY: <strong id="rot-y-val">-8.0°</strong></span>
+      <span>Zoom: <strong id="zoom-val">100%</strong></span>
+    </div>
+  </div>
+
+  <!-- Escenario 3D Interactivo -->
+  <main id="scene-container" class="scene-container">
+    <div id="world-3d" class="world-3d">
+      <!-- Capa de Conexiones SVG -->
+      <svg id="connections-svg" class="connections-svg"></svg>
+      <!-- Estructura del Árbol HTML -->
+      <div id="tree-container" class="tree-hierarchy"></div>
+    </div>
+  </main>
+
+  <!-- Pie de Página: Leyenda e Instrucciones -->
+  <footer class="app-footer">
+    <div class="legend-container">
+      <span class="legend-title">Símbolos:</span>
+      <div class="legend-item">
+        <span class="legend-dot non-terminal"></span>
+        <span>No Terminal (E, T, F)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot terminal-id"></span>
+        <span>Identificador (id)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot terminal-op"></span>
+        <span>Operador (+, *)</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot terminal-paren"></span>
+        <span>Paréntesis (, )</span>
+      </div>
+    </div>
+
+    <div class="tips-container">
+      <span class="tip-badge">🖱️ Mueve el cursor para inclinar en 3D</span>
+      <span class="tip-badge">🔍 Rueda para Zoom</span>
+      <span class="tip-badge">👆 Pasa sobre un nodo para resaltarlo</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -10,8 +10,7 @@
          id  id
 
 ```
-
-### Explicación breve (para `.md`):
+# id * (id + id 
 
 ```markdown
 * **Estrategia:** Recuperación a nivel de frase (*Phrase-level recovery*).
